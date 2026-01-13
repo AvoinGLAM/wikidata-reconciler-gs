@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+
+  :root { 
+  --google-blue: #1a73e8; 
+  --border-gray: #dadce0; 
+  --text-main: #3c4043;
+  --text-sub: #70757a;
+  --bg-sidebar: #f1f3f4; 
+  --hover-gray: #f8f9fa; /* Added missing variable */
+}
+
+  body { 
+  font-family: "Google Sans", Roboto, Arial, sans-serif; 
+  margin: 0; 
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-size: 0.875rem;
+}
+  
+/* The White Cards */
+.section { 
+  background-color: #ffffff; 
+  padding: 16px;
+  border-radius: 12px;
+}
+  
+  h3 { 
+    font-size: 1.1rem; 
+    margin: 0; 
+    font-weight: 500; 
+    color: var(--text-main);
+  }
+  h4 { 
+    font-size: 0.85rem; 
+    margin: 12px 0 0;
+    font-weight: 500; 
+    letter-spacing: 0.5px;
+  }
+
+  /* Collapsible Settings - Simplified */
+  summary { 
+    cursor: pointer; 
+    outline: none; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  summary::after {
+    content: '▾';
+    color: var(--text-sub);
+  }
+
+  /* Inputs and Buttons */
+  input[type="text"], input[type="search"] { 
+    width: 100%; 
+    padding: 8px 0; 
+    border: none; 
+    border-bottom: 1px solid var(--border-gray); 
+    border-radius: 0;
+    transition: border-color 0.2s;
+  }
+  
+  input:focus { 
+    outline: none; 
+    border-bottom: 2px solid var(--google-blue); 
+  }
+
+  button { 
+    cursor: pointer; 
+    background: var(--google-blue); 
+    color: white; 
+    border: none; 
+    padding: 10px 24px; 
+    border-radius: 4px; 
+    font-weight: 500; 
+    width: 100%; 
+    margin-top: 8px;
+  }
+
+  .checkbox-group { color: var(--text-main); }
+  .checkbox-group label { display: block; margin-bottom: 2px; cursor: pointer; }
+
+  .footer { 
+    margin-top: 32px; 
+    padding-top: 16px;
+    border-top: 1px solid var(--border-gray);
+    text-align: center; 
+  }
+
+/* Content Wrapper to separate components inside the cards */
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settingspart {
+  margin-top: 12px;
+}
+
+/* The Settings Card - Pinned to Top */
+#settingsSection {
+  flex-shrink: 0; /* Prevents it from getting squished */
+  z-index: 10;
+}
+
+/* The Search Card - Takes remaining space */
+#searchSection {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* We handle scrolling inside the results div instead */
+  gap: 12px;
+}
+
+/* The Results - The only part that scrolls */
+#results {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Results List - No borders between items, just space and hover */
+  .result { 
+    padding: 4px;
+    margin: -4px;
+    border-radius: 4px;
+    cursor: pointer; 
+    transition: background 0.2s; 
+  }
+
+  .result:hover { background: var(--hover-gray); }
+
+  .result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px; /* Adds breathing room between name and QID */
+  margin-bottom: 4px;
+  }
+
+  .result-title { 
+    color: var(--google-blue); 
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+
+  .qid { 
+    color: var(--text-sub);
+    font-size: 11px;
+    background: #f1f3f4;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  .desc { 
+    font-size: 12px; 
+    color: var(--text-sub); 
+    line-height: 1.4;
+  }
+
+.description {
+  font-size:0.85em; 
+  color:#666;
+}
+
+  button { 
+    border-radius: 4px; 
+    padding: 10px; 
+    font-weight: 500;
+    font-size: 14px;
+    box-shadow: none;
+    margin: 0;
+  }
+
+  /* White secondary button for Prepare Columns */
+  #prepBtn {
+    background: white;
+    color: var(--google-blue);
+    border: 1px solid var(--border-gray);
+  }
+
+  #prepBtn:hover { border-color: var(--google-blue); background: #f4f8fe; }
+
+  </style>
+</head>
+<body>
+
+<div class="container" style="display: flex; flex-direction: column; height: 100%; gap:16px">
+  
+<div class="section" id="settingsSection">
+  <details open>
+    <summary><h3>Settings</h3></summary>
+    <div class="content-wrapper settingspart">
+      <h4>Include</h4>
+      <div class="checkbox-group">
+        <label><input type="checkbox" id="includeLabel" checked> Labels</label>
+        <label><input type="checkbox" id="includeDesc"> Descriptions</label>
+      </div>
+      <input type="text" id="langs" placeholder="Add language codes (eg. en,mul)">
+      <button id="prepBtn" onclick="prepareSheetColumns()">Create empty columns</button>
+    </div>
+  </details>
+</div>
+
+<div class="section" id="searchSection">
+  <h3>Search</h3>
+  <div class="content-wrapper">
+    <input type="search" id="manualQuery" placeholder="Select a cell..." onkeypress="if(event.key==='Enter') startSearch(true)">
+    <button id="mainBtn" onclick="startSearch(false)">Search Wikidata</button>
+    <h4>Match</h4>
+    <div class="checkbox-group">
+      <label><input type="radio" name="scope" value="SINGLE_CELL" checked> This cell only</label>
+      <label><input type="radio" name="scope" value="COLUMN_SAME_VALUE"> All similar values in column</label>
+    </div>
+  </div>
+  
+  <div id="results"></div>
+</div>
+
+</div>
+
+<script>
+let currentContext = null;
+
+window.onload = function() {
+  // 1. We NO LONGER set langInput.value here to keep the box clean.
+  // 2. We still focus the input so the user can start typing immediately.
+  const langInput = document.getElementById('langs');
+  if (langInput) langInput.focus();
+
+  // 3. Keep the API readiness check (essential for Google Apps Script)
+  const checkGoogle = setInterval(function() {
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      clearInterval(checkGoogle);
+      console.log("Google API Ready");
+    }
+  }, 100);
+};
+
+// --- CORRECTED FUNCTION ---
+function prepareSheetColumns() {
+  const config = getConfig();
+  const btn = document.getElementById('prepBtn');
+  btn.innerText = "Preparing...";
+  btn.disabled = true;
+
+  google.script.run
+    .withSuccessHandler(() => {
+      btn.innerText = "Columns ready!";
+      btn.style.color = "var(--google-blue)";
+      btn.style.background = "white";
+      setTimeout(() => {
+        btn.innerText = "Create empty columns";
+        btn.disabled = false;
+      }, 2000);
+    })
+    .withFailureHandler(err => {
+      alert("Error preparing sheet: " + err);
+      btn.style.color = "var(--google-blue)";
+      btn.style.background = "white";
+      btn.disabled = false;
+      btn.innerText = "Create empty columns";
+    })
+    .setupColumns(config);
+}
+
+function setBtnState(isLoading) {
+  const btn = document.getElementById('mainBtn');
+  if (isLoading) {
+    btn.disabled = true;
+    btn.innerText = "Searching...";
+    btn.style.background = "var(--google-blue)";
+  } else {
+    btn.disabled = false;
+    btn.innerText = "Search Wikidata";
+    btn.style.background = "var(--google-blue)";
+  }
+}
+
+function startSearch(isManual) {
+  const queryInput = document.getElementById('manualQuery');
+  const resultsDiv = document.getElementById('results');
+  
+  resultsDiv.innerHTML = '';
+  setBtnState(true);
+
+  google.script.run
+    .withSuccessHandler(ctx => {
+      currentContext = ctx; // <--- Ensure this line is exactly like this
+      const searchTerm = isManual ? queryInput.value.trim() : ctx.value;
+      queryInput.value = searchTerm;
+      performWikidataSearch(searchTerm, getConfig().langs);
+    })
+    .withFailureHandler(err => {
+      setBtnState(false);
+      alert("Error context: " + err);
+    })
+    .getActiveContext();
+}
+
+function performWikidataSearch(query, langs) {
+  google.script.run
+    .withSuccessHandler(results => {
+      setBtnState(false);
+      showResults(results);
+    })
+    .withFailureHandler(err => {
+      setBtnState(false);
+      alert("Search failed: " + err);
+    })
+    .searchWikidata(query, langs);
+}
+
+function getConfig() {
+  const langInput = document.getElementById('langs').value.trim();
+  
+  // Logic:
+  // 1. If input is blank, use ['en']
+  // 2. If input has text, split by comma
+  // 3. .map(l => l.trim()) removes accidental spaces
+  // 4. .filter(l => l) removes empty entries (like if someone types "en,,fi")
+  const finalLangs = langInput 
+    ? langInput.split(',').map(l => l.trim()).filter(l => l) 
+    : ['en'];
+
+  return {
+    includeLabel: document.getElementById('includeLabel').checked,
+    includeDesc: document.getElementById('includeDesc').checked,
+    langs: finalLangs
+  };
+}
+
+function showResults(results) {
+  const el = document.getElementById('results');
+  if (!results || results.length === 0) {
+    el.innerHTML = '<div class="desc">No results found.</div>';
+    return;
+  }
+  
+  results.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'result';
+    
+    div.innerHTML = `
+      <div class="result-header">
+        <div class="result-title">${r.label}</div>
+        <a href="https://www.wikidata.org/wiki/${r.id}" 
+           target="_blank" 
+           class="qid-link" 
+           onclick="event.stopPropagation();">
+          <span class="qid">${r.id}</span>
+        </a>
+      </div>
+      <div class="description">${r.description || 'No description available'}</div>
+    `;
+    
+    div.onclick = () => apply(r.id);
+    el.appendChild(div);
+  });
+}
+
+function apply(qid) {
+  // 1. Find the selected radio button
+  const scopeInput = document.querySelector('input[name="scope"]:checked');
+  
+  // 2. Fallback to 'SINGLE_CELL' if the input isn't found (prevents the error)
+  const scope = scopeInput ? scopeInput.value : 'SINGLE_CELL';
+  
+  const config = getConfig();
+  const queryInput = document.getElementById('manualQuery');
+  
+  document.getElementById('results').classList.add('loading-overlay');
+  
+  google.script.run
+    .withSuccessHandler(() => {
+      document.getElementById('results').classList.remove('loading-overlay');
+      queryInput.value = ''; 
+      document.getElementById('results').innerHTML = '';
+      remoteMatchNotification();
+    })
+    .withFailureHandler(err => {
+      document.getElementById('results').classList.remove('loading-overlay');
+      alert('Apply error: ' + err);
+    })
+    .applyEntity(qid, scope, config, currentContext);
+}
+
+function showHelp() {
+  alert("1. Select a cell.\n2. Click 'Search Wikidata'.\n3. Click a result to update your sheet.");
+}
+
+function remoteMatchNotification() {
+  const btn = document.getElementById('mainBtn');
+  const originalText = "Search Wikidata";
+  const originalBg = "var(--google-blue)";
+
+  // Set Success State
+  btn.innerText = "Match added";
+  btn.style.background = "#1e8e3e"; 
+  btn.disabled = true;
+
+  // Revert after 1.5 seconds (faster revert feels snappier for high-volume work)
+  setTimeout(() => {
+    btn.innerText = originalText;
+    btn.style.background = originalBg;
+    btn.disabled = false;
+    
+    // Optional: Re-focus the search box so the user can start typing immediately
+    document.getElementById('manualQuery').focus();
+  }, 1500);
+}
+</script>
+</body>
+</html>
