@@ -12,4 +12,5 @@ A robust app to match spreadsheet data to Wikidata
 Follow the repository for updates. The app will be available publicly soon.
 
 <img width="341" height="623" alt="image" src="https://github.com/user-attachments/assets/1038abc9-cc1e-4bf9-aa11-e3d1c619f37f" />
-<img width="1014" height="283" alt="image" src="https://github.com/user-attachments/assets/2f783b20-2711-4111-a129-5c7641cdff6a" />
+<img width="824" height="282" alt="image" src="https://github.com/user-attachments/assets/dd554e28-e09d-4ffa-97f9-3ad42528184d" />
+
